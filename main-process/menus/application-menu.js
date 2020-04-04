@@ -10,9 +10,6 @@ const template = [
         role: 'undo'
       },
       {
-        label: 'Redo'
-      },
-      {
         accelerator: 'Shift+CmdOrCtrl+Z',
         role: 'redo'
       },

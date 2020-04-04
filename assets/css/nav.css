@@ -1,5 +1,35 @@
 /* Nav */
+/*---
+boston university red: #D00000;
+vivid gamboge yellow: #FF9700;
+tufts blue: #3F88C5;
+oxford blue: #032B43;
+deep green cyan turquoise: #136F63;
 
+
+ravenclaw blue and gray
+.theme-ravenclaw {
+  --fa-secondary-opacity: 1.0;
+  --fa-primary-color: rgb(4, 56, 161);
+  --fa-secondary-color: rgb(108, 108, 108);
+}
+
+
+---*/
+:root {
+  --fa-secondary-opacity: 1.0;
+  --fa-primary-color: rgb(4, 56, 161);
+  --fa-secondary-color: rgb(108, 108, 108);
+}
+.brand-icon {
+  font-size: 36px;
+}
+.brand-primary-text {
+  color: rgb(4, 56, 161);
+}
+.brand-primary-bg {
+  background-color: rgb(4, 56, 161);
+}
 .nav {
   width: 340px;
   overflow-x: hidden;
@@ -41,8 +71,6 @@
   top: 1.5rem; /* magic */
   right: 1.75rem; /* magic */
 }
-
-
 
 .nav-item {
   padding: .5em 0;
