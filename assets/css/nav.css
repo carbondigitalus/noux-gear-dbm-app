@@ -30,6 +30,12 @@ ravenclaw blue and gray
 .brand-primary-bg {
   background-color: rgb(4, 56, 161);
 }
+.add-database-icon {
+  position: absolute !important;
+  right: 20px;
+  font-size: 1.5em;
+  top: 0;
+}
 .nav {
   width: 340px;
   overflow-x: hidden;
