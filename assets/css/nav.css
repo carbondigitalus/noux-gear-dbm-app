@@ -74,6 +74,7 @@ ravenclaw blue and gray
 
 .nav-item {
   padding: .5em 0;
+  position: relative;
 }
 
 .nav-icon {
@@ -137,7 +138,7 @@ ravenclaw blue and gray
 
 .nav-footer-icon {
   width: calc(770px / 6.5);
-  height: calc(88px / 6.5);
+  height: calc(200px / 6.5);
 }
 
 .nav-footer a {
