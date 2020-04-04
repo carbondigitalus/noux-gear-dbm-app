@@ -1,4 +1,4 @@
-const {app, dialog, globalShortcut} = require('electron')
+const { app, dialog, globalShortcut } = require('electron');
 
 app.on('ready', () => {
   globalShortcut.register('CommandOrControl+Alt+K', () => {
@@ -7,10 +7,10 @@ app.on('ready', () => {
       message: 'Success!',
       detail: 'You pressed the registered global shortcut keybinding.',
       buttons: ['OK']
-    })
-  })
-})
+    });
+  });
+});
 
 app.on('will-quit', () => {
-  globalShortcut.unregisterAll()
-})
+  globalShortcut.unregisterAll();
+});

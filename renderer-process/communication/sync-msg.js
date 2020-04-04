@@ -1,9 +1,9 @@
-const {ipcRenderer} = require('electron')
+const { ipcRenderer } = require('electron');
 
-const syncMsgBtn = document.getElementById('sync-msg')
+const syncMsgBtn = document.getElementById('sync-msg');
 
 syncMsgBtn.addEventListener('click', () => {
-  const reply = ipcRenderer.sendSync('synchronous-message', 'ping')
-  const message = `Synchronous message reply: ${reply}`
-  document.getElementById('sync-reply').innerHTML = message
-})
+  const reply = ipcRenderer.sendSync('synchronous-message', 'ping');
+  const message = `Synchronous message reply: ${reply}`;
+  document.getElementById('sync-reply').innerHTML = message;
+});

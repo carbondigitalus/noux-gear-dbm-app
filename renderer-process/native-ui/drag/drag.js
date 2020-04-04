@@ -1,8 +1,8 @@
-const {ipcRenderer} = require('electron')
+const { ipcRenderer } = require('electron');
 
-const dragFileLink = document.getElementById('drag-file-link')
+const dragFileLink = document.getElementById('drag-file-link');
 
 dragFileLink.addEventListener('dragstart', (event) => {
-  event.preventDefault()
-  ipcRenderer.send('ondragstart', __filename)
-})
+  event.preventDefault();
+  ipcRenderer.send('ondragstart', __filename);
+});

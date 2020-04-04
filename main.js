@@ -1,23 +1,23 @@
-require('update-electron-app')({
-  logger: require('electron-log')
-})
+require("update-electron-app")({
+  logger: require("electron-log")
+});
 
-const path = require('path')
-const glob = require('glob')
-const {app, BrowserWindow} = require('electron')
+const path = require("path");
+const glob = require("glob");
+const { app, BrowserWindow } = require("electron");
 
-const debug = /--debug/.test(process.argv[2])
+const debug = /--debug/.test(process.argv[2]);
 
-if (process.mas) app.setName('Electron APIs')
+if (process.mas) app.setName("Electron APIs");
 
-let mainWindow = null
+let mainWindow = null;
 
-function initialize () {
-  makeSingleInstance()
+function initialize() {
+  makeSingleInstance();
 
-  loadDemos()
+  loadDemos();
 
-  function createWindow () {
+  function createWindow() {
     const windowOptions = {
       width: 1080,
       minWidth: 680,
@@ -26,42 +26,42 @@ function initialize () {
       webPreferences: {
         nodeIntegration: true
       }
+    };
+
+    if (process.platform === "linux") {
+      windowOptions.icon = path.join(__dirname, "/assets/app-icon/png/512.png");
     }
 
-    if (process.platform === 'linux') {
-      windowOptions.icon = path.join(__dirname, '/assets/app-icon/png/512.png')
-    }
-
-    mainWindow = new BrowserWindow(windowOptions)
-    mainWindow.loadURL(path.join('file://', __dirname, '/index.html'))
+    mainWindow = new BrowserWindow(windowOptions);
+    mainWindow.loadURL(path.join("file://", __dirname, "/index.html"));
 
     // Launch fullscreen with DevTools open, usage: npm run debug
     if (debug) {
-      mainWindow.webContents.openDevTools()
-      mainWindow.maximize()
-      require('devtron').install()
+      mainWindow.webContents.openDevTools();
+      mainWindow.maximize();
+      require("devtron").install();
     }
 
-    mainWindow.on('closed', () => {
-      mainWindow = null
-    })
+    mainWindow.on("closed", () => {
+      mainWindow = null;
+    });
   }
 
-  app.on('ready', () => {
-    createWindow()
-  })
+  app.on("ready", () => {
+    createWindow();
+  });
 
-  app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-      app.quit()
+  app.on("window-all-closed", () => {
+    if (process.platform !== "darwin") {
+      app.quit();
     }
-  })
+  });
 
-  app.on('activate', () => {
+  app.on("activate", () => {
     if (mainWindow === null) {
-      createWindow()
+      createWindow();
     }
-  })
+  });
 }
 
 // Make this app a single instance app.
@@ -71,23 +71,25 @@ function initialize () {
 //
 // Returns true if the current version of the app should quit instead of
 // launching.
-function makeSingleInstance () {
-  if (process.mas) return
+function makeSingleInstance() {
+  if (process.mas) return;
 
-  app.requestSingleInstanceLock()
+  app.requestSingleInstanceLock();
 
-  app.on('second-instance', () => {
+  app.on("second-instance", () => {
     if (mainWindow) {
-      if (mainWindow.isMinimized()) mainWindow.restore()
-      mainWindow.focus()
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
     }
-  })
+  });
 }
 
 // Require each JS file in the main-process dir
-function loadDemos () {
-  const files = glob.sync(path.join(__dirname, 'main-process/**/*.js'))
-  files.forEach((file) => { require(file) })
+function loadDemos() {
+  const files = glob.sync(path.join(__dirname, "main-process/**/*.js"));
+  files.forEach(file => {
+    require(file);
+  });
 }
 
-initialize()
+initialize();

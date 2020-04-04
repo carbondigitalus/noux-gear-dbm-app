@@ -1,9 +1,10 @@
-const os = require('os')
-const homeDir = os.homedir()
+const os = require('os');
 
-const sysInfoBtn = document.getElementById('sys-info')
+const homeDir = os.homedir();
+
+const sysInfoBtn = document.getElementById('sys-info');
 
 sysInfoBtn.addEventListener('click', () => {
-  const message = `Your system home directory is: ${homeDir}`
-  document.getElementById('got-sys-info').innerHTML = message
-})
+  const message = `Your system home directory is: ${homeDir}`;
+  document.getElementById('got-sys-info').innerHTML = message;
+});

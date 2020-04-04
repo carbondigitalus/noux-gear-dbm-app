@@ -1,105 +1,124 @@
-#!/usr/bin/env node
+const childProcess = require('child_process');
+const fs = require('fs');
+const path = require('path');
+const octokit = require('@octokit/rest');
+const { version } = require('../package');
 
-const childProcess = require('child_process')
-const fs = require('fs')
-const path = require('path')
-const octokit = require('@octokit/rest')
+const token = process.env.ELECTRON_API_DEMO_GITHUB_TOKEN;
 
-const token = process.env.ELECTRON_API_DEMO_GITHUB_TOKEN
-const version = require('../package').version
 const github = octokit({
   timeout: 30 * 1000,
   'user-agent': `node/${process.versions.node}`
-})
+});
 
 if (!token) {
-  console.error('ELECTRON_API_DEMO_GITHUB_TOKEN environment variable not set\nSet it to a token with repo scope created from https://github.com/settings/tokens/new')
-  process.exit(1)
+  console.error(
+    'ELECTRON_API_DEMO_GITHUB_TOKEN environment variable not set\nSet it to a token with repo scope created from https://github.com/settings/tokens/new'
+  );
+  process.exit(1);
 }
 
 github.authenticate({
   type: 'token',
   token: token
-})
+});
 
-async function doRelease () {
-  const release = await getOrCreateRelease()
-  const assets = await prepareAssets()
-  await uploadAssets(release, assets)
-  await publishRelease(release)
-  console.log('Done!')
-}
-
-doRelease().catch(err => {
-  console.error(err.message || err)
-  process.exit(1)
-})
-
-function prepareAssets () {
-  const outPath = path.join(__dirname, '..', 'out')
-
-  const zipAssets = [{
-    name: 'electron-api-demos-mac.zip',
-    path: path.join(outPath, 'Electron API Demos-darwin-x64', 'Electron API Demos.app')
-  }, {
-    name: 'electron-api-demos-windows.zip',
-    path: path.join(outPath, 'Electron API Demos-win32-ia32')
-  }, {
-    name: 'electron-api-demos-linux.zip',
-    path: path.join(outPath, 'Electron API Demos-linux-x64')
-  }]
-
-  return Promise.all(zipAssets.map(zipAsset)).then((zipAssets) => {
-    return zipAssets.concat([{
-      name: 'RELEASES',
-      path: path.join(outPath, 'windows-installer', 'RELEASES')
-    }, {
-      name: 'ElectronAPIDemosSetup.exe',
-      path: path.join(outPath, 'windows-installer', 'ElectronAPIDemosSetup.exe')
-    }, {
-      name: `electron-api-demos-${version}-full.nupkg`,
-      path: path.join(outPath, 'windows-installer', `electron-api-demos-${version}-full.nupkg`)
-    }])
-  })
-}
-
-function zipAsset (asset) {
+function zipAsset(asset) {
   return new Promise((resolve, reject) => {
-    const assetBase = path.basename(asset.path)
-    const assetDirectory = path.dirname(asset.path)
-    console.log(`Zipping ${assetBase} to ${asset.name}`)
+    const assetBase = path.basename(asset.path);
+    const assetDirectory = path.dirname(asset.path);
+    console.log(`Zipping ${assetBase} to ${asset.name}`);
 
     if (!fs.existsSync(asset.path)) {
-      return reject(new Error(`${asset.path} does not exist`))
+      return reject(new Error(`${asset.path} does not exist`));
     }
 
-    const zipCommand = `zip --recurse-paths --symlinks '${asset.name}' '${assetBase}'`
-    const options = {cwd: assetDirectory, maxBuffer: Infinity}
+    const zipCommand = `zip --recurse-paths --symlinks '${asset.name}' '${assetBase}'`;
+    const options = { cwd: assetDirectory, maxBuffer: Infinity };
     childProcess.exec(zipCommand, options, (error) => {
       if (error) {
-        reject(error)
+        reject(error);
       } else {
-        asset.path = path.join(assetDirectory, asset.name)
-        resolve(asset)
+        asset.path = path.join(assetDirectory, asset.name);
+        resolve(asset);
       }
-    })
-  })
+    });
+  });
+}
+function prepareAssets() {
+  const outPath = path.join(__dirname, '..', 'out');
+  const zipAssets = [
+    {
+      name: 'electron-api-demos-mac.zip',
+      path: path.join(
+        outPath,
+        'Electron API Demos-darwin-x64',
+        'Electron API Demos.app'
+      )
+    },
+    {
+      name: 'electron-api-demos-windows.zip',
+      path: path.join(outPath, 'Electron API Demos-win32-ia32')
+    },
+    {
+      name: 'electron-api-demos-linux.zip',
+      path: path.join(outPath, 'Electron API Demos-linux-x64')
+    }
+  ];
+
+  return Promise.all(zipAssets.map(zipAsset)).then(() => {
+    return zipAssets.concat([
+      {
+        name: 'RELEASES',
+        path: path.join(outPath, 'windows-installer', 'RELEASES')
+      },
+      {
+        name: 'ElectronAPIDemosSetup.exe',
+        path: path.join(
+          outPath,
+          'windows-installer',
+          'ElectronAPIDemosSetup.exe'
+        )
+      },
+      {
+        name: `electron-api-demos-${version}-full.nupkg`,
+        path: path.join(
+          outPath,
+          'windows-installer',
+          `electron-api-demos-${version}-full.nupkg`
+        )
+      }
+    ]);
+  });
 }
 
-async function getOrCreateRelease () {
+function uploadAsset(release, asset) {
+  return github.repos.uploadReleaseAsset({
+    headers: {
+      'content-type': 'application/octet-stream',
+      'content-length': fs.statSync(asset.path).size
+    },
+    url: release.upload_url,
+    file: fs.createReadStream(asset.path),
+    name: asset.name
+  });
+}
+async function getOrCreateRelease() {
   const { data: releases } = await github.repos.listReleases({
     owner: 'electron',
     repo: 'electron-api-demos',
     per_page: 100,
     page: 1
-  })
-  const existingRelease = releases.find(release => release.tag_name === `v${version}` && release.draft === true)
+  });
+  const existingRelease = releases.find(
+    (release) => release.tag_name === `v${version}` && release.draft === true
+  );
   if (existingRelease) {
-    console.log(`Using existing draft release for v${version}`)
-    return existingRelease
+    console.log(`Using existing draft release for v${version}`);
+    return existingRelease;
   }
 
-  console.log('Creating new draft release')
+  console.log('Creating new draft release');
   const { data: release } = await github.repos.createRelease({
     owner: 'electron',
     repo: 'electron-api-demos',
@@ -109,57 +128,69 @@ async function getOrCreateRelease () {
     body: 'An awesome new release :tada:',
     draft: true,
     prerelease: false
-  })
-  return release
+  });
+  return release;
 }
 
-async function uploadAssets (release, assets) {
+async function uploadAssets(release, assets) {
   for (const asset of assets) {
-    if (release.assets.some(ghAsset => ghAsset.name === asset.name)) {
-      console.log(`Skipping already uploaded asset ${asset.name}`)
+    if (release.assets.some((ghAsset) => ghAsset.name === asset.name)) {
+      console.log(`Skipping already uploaded asset ${asset.name}`);
     } else {
-      process.stdout.write(`Uploading ${asset.name}... `)
+      process.stdout.write(`Uploading ${asset.name}... `);
       try {
-        await uploadAsset(release, asset)
+        uploadAsset(release, asset);
       } catch (err) {
-        if (err.name === 'HttpError' && err.message.startsWith('network timeout')) {
-          console.error('\n')
-          console.error(`  There was a network timeout while uploading ${asset.name}.`)
-          console.error('  This likely resulted in a bad asset; please visit the release at')
-          console.error(`  ${release.html_url} and manually remove the bad asset,`)
-          console.error(`  then run this script again to continue where you left off.`)
-          console.error('')
-          process.exit(2)
+        if (
+          err.name === 'HttpError' &&
+          err.message.startsWith('network timeout')
+        ) {
+          console.error('\n');
+          console.error(
+            `  There was a network timeout while uploading ${asset.name}.`
+          );
+          console.error(
+            '  This likely resulted in a bad asset; please visit the release at'
+          );
+          console.error(
+            `  ${release.html_url} and manually remove the bad asset,`
+          );
+          console.error(
+            `  then run this script again to continue where you left off.`
+          );
+          console.error('');
+          process.exit(2);
         } else {
-          throw err
+          throw err;
         }
       }
 
-      process.stdout.write('Success!\n')
+      process.stdout.write('Success!\n');
       // [mkt] Waiting a bit between uploads seems to increase success rate
-      await new Promise(resolve => setTimeout(resolve, 5000))
+      await new Promise((resolve) => setTimeout(resolve, 5000));
     }
   }
 }
 
-function uploadAsset (release, asset) {
-  return github.repos.uploadReleaseAsset({
-    headers: {
-      'content-type': 'application/octet-stream',
-      'content-length': fs.statSync(asset.path).size
-    },
-    url: release.upload_url,
-    file: fs.createReadStream(asset.path),
-    name: asset.name
-  })
-}
-
-function publishRelease (release) {
-  console.log('Publishing release')
+function publishRelease(release) {
+  console.log('Publishing release');
   return github.repos.updateRelease({
     owner: 'electron',
     repo: 'electron-api-demos',
     release_id: release.id,
     draft: false
-  })
+  });
 }
+
+async function doRelease() {
+  const release = await getOrCreateRelease();
+  const assets = await prepareAssets();
+  await uploadAssets(release, assets);
+  await publishRelease(release);
+  console.log('Done!');
+}
+
+doRelease().catch((err) => {
+  console.error(err.message || err);
+  process.exit(1);
+});

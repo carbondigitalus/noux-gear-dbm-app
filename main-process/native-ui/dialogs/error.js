@@ -1,5 +1,5 @@
-const {ipcMain, dialog} = require('electron')
+const { ipcMain, dialog } = require('electron');
 
 ipcMain.on('open-error-dialog', (event) => {
-  dialog.showErrorBox('An Error Message', 'Demonstrating an error message.')
-})
+  dialog.showErrorBox('An Error Message', 'Demonstrating an error message.');
+});

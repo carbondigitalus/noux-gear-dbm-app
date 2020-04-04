@@ -1,4 +1,4 @@
-const {ipcMain, dialog} = require('electron')
+const { ipcMain, dialog } = require('electron');
 
 ipcMain.on('open-information-dialog', (event) => {
   const options = {
@@ -6,8 +6,8 @@ ipcMain.on('open-information-dialog', (event) => {
     title: 'Information',
     message: "This is an information dialog. Isn't it nice?",
     buttons: ['Yes', 'No']
-  }
+  };
   dialog.showMessageBox(options, (index) => {
-    event.sender.send('information-dialog-selection', index)
-  })
-})
+    event.sender.send('information-dialog-selection', index);
+  });
+});
