@@ -2,7 +2,7 @@ require("update-electron-app")({
   logger: require("electron-log")
 });
 
-const path = require("path");
+const path = require('path');
 const glob = require("glob");
 const { app, BrowserWindow } = require("electron");
 
