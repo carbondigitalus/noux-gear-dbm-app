@@ -1,7 +1,7 @@
 const settings = require('electron-settings');
 
 function activateDefaultSection() {
-  document.getElementById('button-windows').click();
+  document.getElementById('button-databases').click();
 }
 
 function showMainContent() {
