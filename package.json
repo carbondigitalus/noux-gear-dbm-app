@@ -36,7 +36,6 @@
     "chai-as-promised": "^6.0.0",
     "check-for-leaks": "^1.2.1",
     "electron-packager": "^12.1.0",
-    "electron-winstaller": "^2.2.0",
     "eslint": "^6.6.0",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-config-prettier": "^6.5.0",
@@ -68,9 +67,11 @@
     "electron-log": "^2.2.14",
     "electron-settings": "^3.0.7",
     "electron-shortcut-normalizer": "^1.0.0",
+    "electron-winstaller": "^2.2.0",
     "glob": "^7.1.6",
     "highlight.js": "^9.18.1",
     "mysql": "^2.18.1",
+    "rimraf": "^3.0.2",
     "update-electron-app": "^1.5.0"
   },
   "standard": {

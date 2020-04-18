@@ -1,4 +1,4 @@
-const Application = require("spectron").Application;
+const { Application } = require('spectron');
 const electron = require('electron');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
@@ -9,6 +9,7 @@ chai.should();
 chai.use(chaiAsPromised);
 
 const timeout = process.env.CI ? 30000 : 10000;
+const getUserPath = electron.remote.app.getPath('userData');
 
 describe('demo app', function() {
   this.timeout(timeout);
@@ -47,7 +48,7 @@ describe('demo app', function() {
   it('checks hardcoded path for userData is correct', function() {
     return app.client
       .execute(() => {
-        return require("electron").remote.app.getPath("userData");
+        return getUserPath;
       })
       .then((result) => {
         return result.value;
