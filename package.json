@@ -1,6 +1,6 @@
 {
   "name": "electron-api-demos",
-  "productName": "Electron API Demos",
+  "productName": "Noux Gear Databse Manager",
   "version": "2.0.2",
   "description": "Electron interactive API demos",
   "main": "app.js",

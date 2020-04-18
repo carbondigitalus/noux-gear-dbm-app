@@ -13,7 +13,7 @@ const debug = /--debug/.test(process.argv[2]);
 let mainWindow = null;
 
 if (process.mas) {
-  app.setName('Electron APIs');
+  app.setName('Noux Gear Databse Manager');
 }
 
 // Make this app a single instance app.
