@@ -3,7 +3,7 @@
   "productName": "Electron API Demos",
   "version": "2.0.2",
   "description": "Electron interactive API demos",
-  "main": "main.js",
+  "main": "app.js",
   "bin": "cli.js",
   "scripts": {
     "start": "electron .",
