@@ -44,7 +44,7 @@ The `package.json` sets this file as the `main` file.
 This file is required when using `npm` and Electron.js. It contains details on the app: the author, dependencies, repository and points to `main.js` as the application's main process file.
 
 #### Docs
-The files: `CODE_OF_CONDUCT`, `README`, `docs` and `CONTRIBUTING` files make up the documentation for the project.
+The files: `README` and `docs` files make up the documentation for the project.
 
 ## UI Terminology
 
