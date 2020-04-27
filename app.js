@@ -32,7 +32,7 @@ app.on('second-instance', () => {
   }
 });
 // Require each JS file in the main-process dir
-const files = glob.sync(path.join(__dirname, 'main-process/**/*.js'));
+const files = glob.sync(path.join(`${__dirname}/main-process/**/*.js`));
 files.forEach((file) => {
   return file;
 });
